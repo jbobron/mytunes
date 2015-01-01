@@ -3,24 +3,38 @@ var SongQueue = Songs.extend({
   model: SongModel,
 
   initialize: function(){
-    // this.songQueue = [];
+
     this.on('enqueue', this.enqueue, this);
+    this.on('dequeue', this.dequeue, this);
+    this.on('ended', this.ended, this);
   },
 
   enqueue: function(song){
-    //add song to song queue
-
-
-    //if current song is set
-    console.log(this.get('currentSong'))
-    if(this.get('currentSong')){
-      this.set('songQueue', song);
-      //add to queue
-    } else {
-      this.set('currentSong', song);
+    if(this.length === 1){
+      this.playFirst();
     }
-    //if no current song is set
-      //play song
+  },
+
+  dequeue: function(song){
+    if(this.at(0) === song){
+      this.playNext();
+    } else {
+      this.remove(song);
+    }
+  },
+  playFirst: function(){
+    this.at(0).play();
+  },
+
+  playNext: function(){
+    this.shift();
+    if(this.length >= 1){
+      this.playFirst();
+    } else {
+      this.trigger('stop');
+    }
   }
+
+
 
 });
